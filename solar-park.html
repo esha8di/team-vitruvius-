@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solar Parks – Bangladesh Solar Monitoring</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header class="gov-header">
+  <div class="flag-stripe"></div>
+  <div class="header-content">
+    <div class="logo-area">
+      <div class="gov-seal">☀</div>
+      <div class="title-area">
+        <p class="ministry">People's Republic of Bangladesh</p>
+        <h1>Solar Energy Monitoring Dashboard</h1>
+        <p class="dept">Ministry of Power, Energy &amp; Mineral Resources</p>
+      </div>
+    </div>
+    <div class="header-date" id="headerDate"></div>
+  </div>
+  <div class="flag-stripe"></div>
+</header>
+
+<nav class="main-nav">
+  <a href="dashboard.html">Dashboard</a>
+  <a href="solar-park.html" class="active">Solar Parks</a>
+  <a href="rooftop.html">Rooftop Solar</a>
+  <a href="roadmap.html">Roadmap</a>
+  <a href="index.html" style="margin-left:auto;opacity:0.6;font-size:13px">← Home</a>
+</nav>
+
+<main class="container">
+  <div class="page-title">
+    <h2>Solar Power Plants – 20 Active Stations</h2>
+    <span class="live-badge">● LIVE</span>
+  </div>
+
+  <!-- Summary KPIs -->
+  <div class="kpi-grid" style="margin-bottom:24px">
+    <div class="kpi-card green"><div class="kpi-icon">⚡</div><div class="kpi-data"><span class="kpi-value">1,145 MW</span><span class="kpi-label">Total Park Capacity</span></div></div>
+    <div class="kpi-card blue"><div class="kpi-icon">🔆</div><div class="kpi-data"><span class="kpi-value">832 MW</span><span class="kpi-label">Current Generation</span></div></div>
+    <div class="kpi-card orange"><div class="kpi-icon">📉</div><div class="kpi-data"><span class="kpi-value">27.4%</span><span class="kpi-label">Average System Loss</span></div></div>
+    <div class="kpi-card red"><div class="kpi-icon">🔧</div><div class="kpi-data"><span class="kpi-value">3 Plants</span><span class="kpi-label">Under Maintenance</span></div></div>
+  </div>
+
+  <!-- Generation Chart -->
+  <div class="table-card" style="margin-bottom:24px">
+    <h3 style="color:#004d38;margin-bottom:14px">Generation vs Capacity – All 20 Plants</h3>
+    <canvas id="allPlantsChart" height="100"></canvas>
+  </div>
+
+  <!-- Plant Cards -->
+  <div class="plant-grid" id="plantGrid"></div>
+</main>
+
+<footer class="gov-footer">
+  <p>© 2026 Bangladesh Power Development Board (BPDB) | Ministry of Power, Energy &amp; Mineral Resources</p>
+</footer>
+
+<script>
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-BD',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+const plants = [
+  { name:"Sirajganj Solar Park",       location:"Sirajganj, Rajshahi",      capacity:68,  gen:50,  status:"weather",     reason:"Cloud cover – irradiance 60%" },
+  { name:"Teknaf Solar Plant",         location:"Teknaf, Chattogram",       capacity:30,  gen:27,  status:"normal",      reason:"Operating normally" },
+  { name:"Mymensingh Solar Farm",      location:"Mymensingh",               capacity:50,  gen:38,  status:"weather",     reason:"Overcast conditions" },
+  { name:"Rangpur Solar Park",         location:"Rangpur",                  capacity:40,  gen:29,  status:"maintenance", reason:"Inverter replacement – Unit 2" },
+  { name:"Khulna Solar Plant",         location:"Khulna",                   capacity:55,  gen:45,  status:"normal",      reason:"Operating normally" },
+  { name:"Barisal Solar Farm",         location:"Barisal",                  capacity:35,  gen:30,  status:"normal",      reason:"Operating normally" },
+  { name:"Comilla Solar Park",         location:"Comilla, Chattogram",      capacity:60,  gen:44,  status:"weather",     reason:"Partial cloud – 72% irradiance" },
+  { name:"Rajshahi Solar Station",     location:"Rajshahi",                 capacity:45,  gen:40,  status:"normal",      reason:"Operating normally" },
+  { name:"Sylhet Solar Farm",          location:"Sylhet",                   capacity:42,  gen:30,  status:"weather",     reason:"Monsoon clouds – 71% output" },
+  { name:"Dhaka North Solar Plant",    location:"Gazipur, Dhaka",           capacity:80,  gen:68,  status:"normal",      reason:"Operating normally" },
+  { name:"Dhaka South Solar Farm",     location:"Keraniganj, Dhaka",        capacity:75,  gen:60,  status:"normal",      reason:"Operating normally" },
+  { name:"Narayanganj Solar Park",     location:"Narayanganj, Dhaka",       capacity:50,  gen:42,  status:"normal",      reason:"Operating normally" },
+  { name:"Bogura Solar Station",       location:"Bogura, Rajshahi",         capacity:38,  gen:32,  status:"normal",      reason:"Operating normally" },
+  { name:"Pabna Solar Farm",           location:"Pabna, Rajshahi",          capacity:30,  gen:20,  status:"maintenance", reason:"Panel cleaning & inspection" },
+  { name:"Jessore Solar Park",         location:"Jessore, Khulna",          capacity:48,  gen:39,  status:"normal",      reason:"Operating normally" },
+  { name:"Satkhira Solar Plant",       location:"Satkhira, Khulna",         capacity:35,  gen:28,  status:"weather",     reason:"Coastal haze – 80% output" },
+  { name:"Cox's Bazar Solar Farm",     location:"Cox's Bazar, Chattogram",  capacity:60,  gen:50,  status:"normal",      reason:"Operating normally" },
+  { name:"Habiganj Solar Station",     location:"Habiganj, Sylhet",         capacity:40,  gen:26,  status:"maintenance", reason:"Transformer upgrade in progress" },
+  { name:"Faridpur Solar Park",        location:"Faridpur, Dhaka",          capacity:32,  gen:27,  status:"normal",      reason:"Operating normally" },
+  { name:"Noakhali Solar Farm",        location:"Noakhali, Chattogram",     capacity:32,  gen:28,  status:"normal",      reason:"Operating normally" },
+];
+
+// Chart
+new Chart(document.getElementById('allPlantsChart'),{
+  type:'bar',
+  data:{
+    labels: plants.map(p=>p.name.replace(' Solar','').replace(' Park','').replace(' Farm','').replace(' Plant','').replace(' Station','')),
+    datasets:[
+      {label:'Capacity (MW)',data:plants.map(p=>p.capacity),backgroundColor:'rgba(0,106,78,0.2)',borderColor:'#006a4e',borderWidth:1.5},
+      {label:'Generation (MW)',data:plants.map(p=>p.gen),backgroundColor:'rgba(0,106,78,0.65)',borderColor:'#004d38',borderWidth:1.5}
+    ]
+  },
+  options:{responsive:true,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true}}}
+});
+
+// Plant Cards
+const grid = document.getElementById('plantGrid');
+plants.forEach((p,i)=>{
+  const loss = (((p.capacity-p.gen)/p.capacity)*100).toFixed(1);
+  const lossHigh = loss > 25;
+  const statusColors = {normal:'green',weather:'yellow',maintenance:'red'};
+  const statusText  = {normal:'Normal',weather:'Weather',maintenance:'Maintenance'};
+  const cardClass = p.status==='maintenance'?'danger-card':p.status==='weather'?'warning-card':'';
+  const barWidth = Math.min(loss,100);
+  grid.innerHTML+=`
+  <div class="plant-card ${cardClass}">
+    <div class="plant-name">${i+1}. ${p.name}</div>
+    <div class="plant-location">📍 ${p.location}</div>
+    <div class="plant-metrics">
+      <div class="metric-box"><span class="val">${p.capacity} MW</span><span class="lbl">Installed Capacity</span></div>
+      <div class="metric-box"><span class="val" style="color:#1565c0">${p.gen} MW</span><span class="lbl">Current Generation</span></div>
+    </div>
+    <div class="loss-bar-wrap">
+      <div class="loss-bar-label"><span>System Loss</span><span style="color:${lossHigh?'#e53935':'#2e7d32'};font-weight:700">${loss}%</span></div>
+      <div class="loss-bar-track"><div class="loss-bar-fill ${lossHigh?'loss-high':''}" style="width:${barWidth}%"></div></div>
+    </div>
+    <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+      <span class="badge ${statusColors[p.status]}">${statusText[p.status]}</span>
+      <span style="font-size:11px;color:#888">${p.reason}</span>
+    </div>
+  </div>`;
+});
+</script>
+</body>
+</html>

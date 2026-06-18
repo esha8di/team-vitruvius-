@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard – Bangladesh Solar Monitoring</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header class="gov-header">
+  <div class="flag-stripe"></div>
+  <div class="header-content">
+    <div class="logo-area">
+      <div class="gov-seal">☀</div>
+      <div class="title-area">
+        <p class="ministry">People's Republic of Bangladesh</p>
+        <h1>Solar Energy Monitoring Dashboard</h1>
+        <p class="dept">Ministry of Power, Energy &amp; Mineral Resources</p>
+      </div>
+    </div>
+    <div class="header-date" id="headerDate"></div>
+  </div>
+  <div class="flag-stripe"></div>
+</header>
+
+<nav class="main-nav">
+  <a href="dashboard.html" class="active">Dashboard</a>
+  <a href="solar-park.html">Solar Parks</a>
+  <a href="rooftop.html">Rooftop Solar</a>
+  <a href="roadmap.html">Roadmap</a>
+  <a href="index.html" style="margin-left:auto;opacity:0.6;font-size:13px">← Home</a>
+</nav>
+
+<main class="container">
+  <div class="page-title">
+    <h2>National Solar Energy Overview</h2>
+    <span class="live-badge">● LIVE</span>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card green">
+      <div class="kpi-icon">⚡</div>
+      <div class="kpi-data">
+        <span class="kpi-value">4903 MW</span>
+        <span class="kpi-label">Total Installed Capacity</span>
+      </div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-icon">🔆</div>
+      <div class="kpi-data">
+        <span class="kpi-value">3656 MW</span>
+        <span class="kpi-label">Current Generation</span>
+      </div>
+    </div>
+    <div class="kpi-card orange">
+      <div class="kpi-icon">📉</div>
+      <div class="kpi-data">
+        <span class="kpi-value">25.84%</span>
+        <span class="kpi-label">Avg System Loss</span>
+      </div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-icon">🏠</div>
+      <div class="kpi-data">
+        <span class="kpi-value">12,450</span>
+        <span class="kpi-label">Net-Metered Rooftops</span>
+      </div>
+    </div>
+    <div class="kpi-card purple">
+      <div class="kpi-icon">🏭</div>
+      <div class="kpi-data">
+        <span class="kpi-value">76</span>
+        <span class="kpi-label">Solar Power Plants</span>
+      </div>
+    </div>
+    <div class="kpi-card teal">
+      <div class="kpi-icon">💰</div>
+      <div class="kpi-data">
+        <span class="kpi-value">৳ 3.2 Cr</span>
+        <span class="kpi-label">Monthly Revenue</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>Generation vs Capacity – Top 5 Plants</h3>
+      <canvas id="barChart" height="220"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Energy Mix by Source</h3>
+      <canvas id="pieChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <!-- Alert Banner -->
+  <div class="alert-box warning">
+    <strong>⚠ Maintenance Alert:</strong> Sirajganj Solar Park Unit-3 (8 MW) is under scheduled maintenance. Expected restoration: 20 June 2026.
+  </div>
+
+  <!-- Plants Status Table -->
+  <div class="table-card">
+    <div class="table-header">
+      <h3>Solar Power Plant Status – Real Time</h3>
+      <a href="solar-park.html" class="btn-view">View All Plants →</a>
+    </div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Plant Name</th>
+            <th>Division</th>
+            <th>Capacity (MW)</th>
+            <th>Generation (MW)</th>
+            <th>System Loss</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Sirajganj Solar Park</td><td>Rajshahi</td><td>68</td><td>50</td><td>26.5%</td><td><span class="badge yellow">Weather</span></td></tr>
+          <tr><td>2</td><td>Teknaf Solar Plant</td><td>Chattogram</td><td>30</td><td>27</td><td>10.0%</td><td><span class="badge green">Normal</span></td></tr>
+          <tr><td>3</td><td>Mymensingh Solar Farm</td><td>Mymensingh</td><td>50</td><td>38</td><td>24.0%</td><td><span class="badge yellow">Weather</span></td></tr>
+          <tr><td>4</td><td>Rangpur Solar Park</td><td>Rangpur</td><td>40</td><td>29</td><td>27.5%</td><td><span class="badge red">Maintenance</span></td></tr>
+          <tr><td>5</td><td>Khulna Solar Plant</td><td>Khulna</td><td>55</td><td>45</td><td>18.2%</td><td><span class="badge green">Normal</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Bottom Row -->
+  <div class="bottom-row">
+    <div class="info-card">
+      <h3>🗺 Implementation Progress</h3>
+      <div class="phase-progress">
+        <div class="phase done">
+          <span class="ph-num">Phase 1</span>
+          <span class="ph-desc">Pilot – 100 Rooftops, Rajshahi</span>
+          <span class="ph-badge done">Completed</span>
+        </div>
+        <div class="phase done">
+          <span class="ph-num">Phase 2</span>
+          <span class="ph-desc">Dhaka + Chattogram – 10,000 Rooftops</span>
+          <span class="ph-badge done">Completed</span>
+        </div>
+        <div class="phase active">
+          <span class="ph-num">Phase 3</span>
+          <span class="ph-desc">All Net-Metered Systems – 100 MW+</span>
+          <span class="ph-badge active">In Progress</span>
+        </div>
+        <div class="phase">
+          <span class="ph-num">Phase 4</span>
+          <span class="ph-desc">Nationwide – 1 Million Rooftops, 5 GW</span>
+          <span class="ph-badge pending">Upcoming</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h3>📊 Today's Statistics</h3>
+      <table class="stats-table">
+        <tr><td>Peak Generation</td><td><strong>718.4 MW</strong></td></tr>
+        <tr><td>Units Generated</td><td><strong>14,842 MWh</strong></td></tr>
+        <tr><td>CO₂ Avoided</td><td><strong>12,320 tonnes</strong></td></tr>
+        <tr><td>Households Powered</td><td><strong>~4.8 Million</strong></td></tr>
+        <tr><td>Net Metering Export</td><td><strong>1,204 MWh</strong></td></tr>
+        <tr><td>Revenue (Today)</td><td><strong>৳ 1.07 Crore</strong></td></tr>
+      </table>
+    </div>
+  </div>
+</main>
+
+<footer class="gov-footer">
+  <p>© 2026 Bangladesh Power Development Board (BPDB) | Ministry of Power, Energy &amp; Mineral Resources | Government of the People's Republic of Bangladesh</p>
+</footer>
+
+<script>
+  document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-BD', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+  new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Sirajganj', 'Teknaf', 'Mymensingh', 'Rangpur', 'Khulna'],
+      datasets: [
+        { label: 'Capacity (MW)', data: [68, 30, 50, 40, 55], backgroundColor: 'rgba(34,139,34,0.25)', borderColor: '#228b22', borderWidth: 2 },
+        { label: 'Generation (MW)', data: [50, 27, 38, 29, 45], backgroundColor: 'rgba(34,139,34,0.7)', borderColor: '#155a15', borderWidth: 2 }
+      ]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+  });
+
+  new Chart(document.getElementById('pieChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Solar Parks', 'Rooftop Solar', 'Under Maintenance', 'Offline'],
+      datasets: [{ data: [612.8, 35.4, 18, 5.6], backgroundColor: ['#2e8b57','#4caf50','#ff9800','#f44336'] }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'right' } } }
+  });
+</script>
+</body>
+</html>

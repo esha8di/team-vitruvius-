@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rooftop Solar – Bangladesh Solar Monitoring</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header class="gov-header">
+  <div class="flag-stripe"></div>
+  <div class="header-content">
+    <div class="logo-area">
+      <div class="gov-seal">☀</div>
+      <div class="title-area">
+        <p class="ministry">People's Republic of Bangladesh</p>
+        <h1>Solar Energy Monitoring Dashboard</h1>
+        <p class="dept">Ministry of Power, Energy &amp; Mineral Resources</p>
+      </div>
+    </div>
+    <div class="header-date" id="headerDate"></div>
+  </div>
+  <div class="flag-stripe"></div>
+</header>
+
+<nav class="main-nav">
+  <a href="dashboard.html">Dashboard</a>
+  <a href="solar-park.html">Solar Parks</a>
+  <a href="rooftop.html" class="active">Rooftop Solar</a>
+  <a href="roadmap.html">Roadmap</a>
+  <a href="index.html" style="margin-left:auto;opacity:0.6;font-size:13px">← Home</a>
+</nav>
+
+<main class="container">
+  <div class="page-title">
+    <h2>Net-Metered Rooftop Solar Installations</h2>
+    <span class="live-badge">● LIVE</span>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" style="margin-bottom:24px">
+    <div class="kpi-card green"><div class="kpi-icon">🏠</div><div class="kpi-data"><span class="kpi-value">12,450</span><span class="kpi-label">Total Rooftops</span></div></div>
+    <div class="kpi-card blue"><div class="kpi-icon">⚡</div><div class="kpi-data"><span class="kpi-value">6,225 kW</span><span class="kpi-label">Total Capacity</span></div></div>
+    <div class="kpi-card teal"><div class="kpi-icon">🔆</div><div class="kpi-data"><span class="kpi-value">4,358 kW</span><span class="kpi-label">Current Generation</span></div></div>
+    <div class="kpi-card purple"><div class="kpi-icon">🔋</div><div class="kpi-data"><span class="kpi-value">78%</span><span class="kpi-label">Avg Battery Level</span></div></div>
+    <div class="kpi-card orange"><div class="kpi-icon">📤</div><div class="kpi-data"><span class="kpi-value">1,204 kWh</span><span class="kpi-label">Exported to Grid Today</span></div></div>
+    <div class="kpi-card red"><div class="kpi-icon">💰</div><div class="kpi-data"><span class="kpi-value">৳ 84,280</span><span class="kpi-label">Owner Earnings Today</span></div></div>
+  </div>
+
+  <!-- Info Banner -->
+  <div class="alert-box" style="background:#e8f5e9;border-left:5px solid #2e8b57;color:#1b5e20;margin-bottom:20px">
+    <strong>ℹ Net Metering System:</strong> Each household with a rooftop panel exports surplus electricity to the national grid. The government pays <strong>৳ 7.00/kWh</strong> for exported units. Panel capacity: 500W per unit. Average generation efficiency: <strong>70%</strong>.
+  </div>
+
+  <!-- Chart -->
+  <div class="charts-row" style="margin-bottom:24px">
+    <div class="chart-card">
+      <h3>Rooftop Distribution by Division</h3>
+      <canvas id="divChart" height="220"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Generation Efficiency Distribution</h3>
+      <canvas id="effChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <!-- Search/Filter -->
+  <div class="table-card" style="margin-bottom:20px">
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <input id="searchBox" type="text" placeholder="Search by house ID or area..." style="padding:8px 14px;border:1px solid #c8e6c9;border-radius:6px;font-size:13px;width:260px">
+      <select id="divFilter" style="padding:8px 14px;border:1px solid #c8e6c9;border-radius:6px;font-size:13px">
+        <option value="">All Divisions</option>
+        <option>Dhaka</option><option>Rajshahi</option><option>Chattogram</option>
+        <option>Khulna</option><option>Sylhet</option><option>Mymensingh</option>
+      </select>
+      <span id="countDisplay" style="font-size:13px;color:#555"></span>
+    </div>
+  </div>
+
+  <!-- Rooftop Cards -->
+  <div class="rooftop-grid" id="rooftopGrid"></div>
+</main>
+
+<footer class="gov-footer">
+  <p>© 2026 Bangladesh Power Development Board (BPDB) | Ministry of Power, Energy &amp; Mineral Resources</p>
+</footer>
+
+<script>
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-BD',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+// Charts
+new Chart(document.getElementById('divChart'),{
+  type:'bar',
+  data:{
+    labels:['Dhaka','Rajshahi','Chattogram','Khulna','Sylhet','Mymensingh','Rangpur','Barisal'],
+    datasets:[{label:'Rooftops',data:[4200,2100,2800,1500,800,600,300,150],backgroundColor:'#4caf50'}]
+  },
+  options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+});
+new Chart(document.getElementById('effChart'),{
+  type:'doughnut',
+  data:{
+    labels:['60–70%','70–80%','80–90%','90%+','<60%'],
+    datasets:[{data:[3200,4100,2800,1500,850],backgroundColor:['#ffc107','#4caf50','#2196f3','#009688','#f44336']}]
+  },
+  options:{responsive:true,plugins:{legend:{position:'right'}}}
+});
+
+const houses = [
+  {id:"RTH-00124",addr:"House 12, Road 5, Dhanmondi, Dhaka",div:"Dhaka",   modules:[{name:"Module A",cap:500,gen:350,bat:82},{name:"Module B",cap:500,gen:360,bat:78}]},
+  {id:"RTH-00235",addr:"Sector 7, Uttara, Dhaka",            div:"Dhaka",   modules:[{name:"Module A",cap:500,gen:310,bat:65}]},
+  {id:"RTH-00316",addr:"Kazla, Rajshahi City",               div:"Rajshahi",modules:[{name:"Module A",cap:500,gen:380,bat:90},{name:"Module B",cap:500,gen:370,bat:88}]},
+  {id:"RTH-00412",addr:"GEC Circle, Chattogram",             div:"Chattogram",modules:[{name:"Module A",cap:500,gen:420,bat:95}]},
+  {id:"RTH-00523",addr:"Sonadanga, Khulna",                  div:"Khulna",  modules:[{name:"Module A",cap:500,gen:340,bat:72},{name:"Module B",cap:500,gen:330,bat:70}]},
+  {id:"RTH-00678",addr:"Upashahar, Sylhet",                  div:"Sylhet",  modules:[{name:"Module A",cap:500,gen:295,bat:60}]},
+  {id:"RTH-00712",addr:"Bypass Road, Mymensingh",            div:"Mymensingh",modules:[{name:"Module A",cap:500,gen:360,bat:80}]},
+  {id:"RTH-00845",addr:"Mirpur-10, Dhaka",                   div:"Dhaka",   modules:[{name:"Module A",cap:500,gen:400,bat:88},{name:"Module B",cap:500,gen:395,bat:87},{name:"Module C",cap:500,gen:380,bat:85}]},
+  {id:"RTH-00963",addr:"Bogura Sadar, Rajshahi",             div:"Rajshahi",modules:[{name:"Module A",cap:500,gen:350,bat:76}]},
+  {id:"RTH-01021",addr:"Halishahar, Chattogram",             div:"Chattogram",modules:[{name:"Module A",cap:500,gen:410,bat:92},{name:"Module B",cap:500,gen:405,bat:91}]},
+  {id:"RTH-01134",addr:"Rayer Bazar, Dhaka",                 div:"Dhaka",   modules:[{name:"Module A",cap:500,gen:330,bat:68}]},
+  {id:"RTH-01256",addr:"Jessore Road, Khulna",               div:"Khulna",  modules:[{name:"Module A",cap:500,gen:345,bat:74},{name:"Module B",cap:500,gen:340,bat:73}]},
+];
+
+function genPct(gen,cap){ return ((gen/cap)*100).toFixed(0); }
+
+function renderCards(data){
+  const grid=document.getElementById('rooftopGrid');
+  grid.innerHTML='';
+  document.getElementById('countDisplay').textContent=`Showing ${data.length} installations`;
+  data.forEach(h=>{
+    const totalCap=h.modules.reduce((a,m)=>a+m.cap,0);
+    const totalGen=h.modules.reduce((a,m)=>a+m.gen,0);
+    const avgBat=Math.round(h.modules.reduce((a,m)=>a+m.bat,0)/h.modules.length);
+    const export_kwh=(totalGen*0.3).toFixed(0);
+    const earning=(export_kwh*7).toFixed(0);
+    let rows=h.modules.map(m=>`<tr><td>${m.name}</td><td>${m.cap}W</td><td>${m.gen}W</td><td class="gen-pct">${genPct(m.gen,m.cap)}%</td></tr>`).join('');
+    grid.innerHTML+=`
+    <div class="rooftop-card">
+      <div class="house-icon">🏠</div>
+      <div class="house-id">${h.id}</div>
+      <div class="house-addr">📍 ${h.addr}</div>
+      <table class="module-table">
+        <thead><tr><th>Module</th><th>Capacity</th><th>Generation</th><th>Efficiency</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="battery-row">
+        <span class="battery-icon">🔋</span>
+        <div class="battery-bar"><div class="battery-fill" style="width:${avgBat}%"></div></div>
+        <span>${avgBat}% Battery</span>
+      </div>
+      <div style="margin-top:10px;background:#f0faf3;border-radius:8px;padding:10px;font-size:12px">
+        <div style="display:flex;justify-content:space-between"><span>📤 Exported Today:</span><strong>${export_kwh} Wh</strong></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px"><span>💰 Earning:</span><strong style="color:#006a4e">৳ ${earning}</strong></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px"><span>🔌 Division:</span><strong>${h.div}</strong></div>
+      </div>
+    </div>`;
+  });
+}
+
+renderCards(houses);
+
+document.getElementById('searchBox').addEventListener('input',function(){
+  const q=this.value.toLowerCase();
+  const div=document.getElementById('divFilter').value;
+  renderCards(houses.filter(h=>(h.id.toLowerCase().includes(q)||h.addr.toLowerCase().includes(q))&&(!div||h.div===div)));
+});
+document.getElementById('divFilter').addEventListener('change',function(){
+  const q=document.getElementById('searchBox').value.toLowerCase();
+  const div=this.value;
+  renderCards(houses.filter(h=>(h.id.toLowerCase().includes(q)||h.addr.toLowerCase().includes(q))&&(!div||h.div===div)));
+});
+</script>
+</body>
+</html>

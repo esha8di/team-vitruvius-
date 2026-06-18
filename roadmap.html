@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap – Bangladesh Solar Monitoring</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header class="gov-header">
+  <div class="flag-stripe"></div>
+  <div class="header-content">
+    <div class="logo-area">
+      <div class="gov-seal">☀</div>
+      <div class="title-area">
+        <p class="ministry">People's Republic of Bangladesh</p>
+        <h1>Solar Energy Monitoring Dashboard</h1>
+        <p class="dept">Ministry of Power, Energy &amp; Mineral Resources</p>
+      </div>
+    </div>
+    <div class="header-date" id="headerDate"></div>
+  </div>
+  <div class="flag-stripe"></div>
+</header>
+
+<nav class="main-nav">
+  <a href="dashboard.html">Dashboard</a>
+  <a href="solar-park.html">Solar Parks</a>
+  <a href="rooftop.html">Rooftop Solar</a>
+  <a href="roadmap.html" class="active">Roadmap</a>
+  <a href="index.html" style="margin-left:auto;opacity:0.6;font-size:13px">← Home</a>
+</nav>
+
+<main class="container">
+  <div class="page-title">
+    <h2>Implementation Roadmap &amp; Revenue Model</h2>
+  </div>
+
+  <!-- Progress Overview -->
+  <div class="kpi-grid" style="margin-bottom:28px">
+    <div class="kpi-card green"><div class="kpi-icon">✅</div><div class="kpi-data"><span class="kpi-value">Phase 1 &amp; 2</span><span class="kpi-label">Completed</span></div></div>
+    <div class="kpi-card blue"><div class="kpi-icon">🔄</div><div class="kpi-data"><span class="kpi-value">Phase 3</span><span class="kpi-label">In Progress</span></div></div>
+    <div class="kpi-card purple"><div class="kpi-icon">📅</div><div class="kpi-data"><span class="kpi-value">Phase 4</span><span class="kpi-label">2027–2030</span></div></div>
+    <div class="kpi-card teal"><div class="kpi-icon">🎯</div><div class="kpi-data"><span class="kpi-value">5 GW</span><span class="kpi-label">Final Target</span></div></div>
+  </div>
+
+  <!-- Roadmap Phases -->
+  <div class="roadmap-container">
+
+    <!-- Phase 1 -->
+    <div class="roadmap-phase">
+      <div class="phase-icon done">1</div>
+      <div class="phase-body">
+        <h3>Phase 1 – Pilot Program</h3>
+        <div class="sub">📍 Rajshahi Division | Duration: 6 months | Status: ✅ Completed</div>
+        <div class="phase-stats">
+          <div class="ph-stat"><strong>100</strong> Rooftops</div>
+          <div class="ph-stat"><strong>50 kW</strong> Capacity</div>
+          <div class="ph-stat"><strong>৳ 3.5L</strong> Investment</div>
+          <div class="ph-stat"><strong>35 kWh/day</strong> Avg Generation</div>
+        </div>
+        <ul style="font-size:13px;color:#555;padding-left:18px;line-height:1.8">
+          <li>Installed monitoring hardware on 100 pilot homes in Rajshahi</li>
+          <li>Established real-time data pipeline to BPDB central server</li>
+          <li>Validated net metering billing system accuracy to 99.2%</li>
+          <li>Customer satisfaction survey: 94% positive response</li>
+        </ul>
+      </div>
+    </div>
+    <div class="phase-connector"></div>
+
+    <!-- Phase 2 -->
+    <div class="roadmap-phase">
+      <div class="phase-icon done">2</div>
+      <div class="phase-body">
+        <h3>Phase 2 – City Expansion</h3>
+        <div class="sub">📍 Dhaka + Chattogram | Duration: 18 months | Status: ✅ Completed</div>
+        <div class="phase-stats">
+          <div class="ph-stat"><strong>10,000</strong> Rooftops</div>
+          <div class="ph-stat"><strong>5 MW</strong> Capacity</div>
+          <div class="ph-stat"><strong>৳ 35 Cr</strong> Investment</div>
+          <div class="ph-stat"><strong>3.5 MWh/day</strong> Avg Generation</div>
+        </div>
+        <ul style="font-size:13px;color:#555;padding-left:18px;line-height:1.8">
+          <li>Scaled monitoring system to 10,000 residential installations</li>
+          <li>Integrated BPDB billing portal with automated payment to customers</li>
+          <li>Launched mobile app for customer generation &amp; earning tracking</li>
+          <li>System loss reduced by 12% through AI-based anomaly detection</li>
+        </ul>
+      </div>
+    </div>
+    <div class="phase-connector"></div>
+
+    <!-- Phase 3 -->
+    <div class="roadmap-phase">
+      <div class="phase-icon active">3</div>
+      <div class="phase-body">
+        <h3>Phase 3 – National Net-Metering Coverage</h3>
+        <div class="sub">📍 All Divisions | Duration: 24 months | Status: 🔄 In Progress (68% complete)</div>
+        <div class="phase-stats">
+          <div class="ph-stat"><strong>100 MW+</strong> Target</div>
+          <div class="ph-stat"><strong>All Divisions</strong></div>
+          <div class="ph-stat"><strong>৳ 350 Cr</strong> Investment</div>
+          <div class="ph-stat"><strong>72 MW</strong> Achieved so far</div>
+        </div>
+        <!-- Progress Bar -->
+        <div style="margin:12px 0">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Progress</span><span style="font-weight:700;color:#1565c0">68%</span></div>
+          <div style="background:#e3f2fd;border-radius:8px;height:12px"><div style="width:68%;height:12px;border-radius:8px;background:linear-gradient(to right,#1565c0,#42a5f5)"></div></div>
+        </div>
+        <ul style="font-size:13px;color:#555;padding-left:18px;line-height:1.8">
+          <li>Deploying monitoring systems across all 8 divisions</li>
+          <li>Integrating 20 large solar parks into unified dashboard</li>
+          <li>Training 500 local technicians for maintenance network</li>
+          <li>Connecting district-level substations to central SCADA</li>
+        </ul>
+      </div>
+    </div>
+    <div class="phase-connector"></div>
+
+    <!-- Phase 4 -->
+    <div class="roadmap-phase">
+      <div class="phase-icon future">4</div>
+      <div class="phase-body">
+        <h3>Phase 4 – Nationwide Rollout</h3>
+        <div class="sub">📍 All Bangladesh | Duration: 2027–2030 | Status: ⏳ Upcoming</div>
+        <div class="phase-stats">
+          <div class="ph-stat"><strong>1 Million</strong> Rooftops</div>
+          <div class="ph-stat"><strong>5 GW</strong> Target</div>
+          <div class="ph-stat"><strong>৳ 50,000 Cr</strong> Investment</div>
+          <div class="ph-stat"><strong>2030</strong> Deadline</div>
+        </div>
+        <ul style="font-size:13px;color:#555;padding-left:18px;line-height:1.8">
+          <li>Universal rooftop solar access for all urban &amp; rural households</li>
+          <li>AI-powered predictive maintenance for all installations</li>
+          <li>Blockchain-based transparent billing &amp; carbon credit system</li>
+          <li>Bangladesh achieves 40% renewable energy in national grid</li>
+          <li>Export surplus energy to neighboring countries via regional grid</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenue Model -->
+  <div style="margin-top:36px">
+    <div class="page-title" style="margin-bottom:16px">
+      <h2>Revenue Model &amp; Sustainability</h2>
+    </div>
+
+    <div class="revenue-grid">
+      <div class="rev-card">
+        <h3>💵 Option A – Government Funded</h3>
+        <div class="rev-opt">
+          <div class="opt-title">Direct Government Allocation</div>
+          <div class="opt-desc">Ministry of Power allocates annual budget for operations, maintenance, and expansion of the solar monitoring system.</div>
+          <div class="opt-amount">৳ 50 Crore/Year</div>
+        </div>
+        <div class="rev-opt">
+          <div class="opt-title">Pros &amp; Cons</div>
+          <div class="opt-desc">
+            ✅ Free for citizens<br>
+            ✅ No usage barriers<br>
+            ❌ Dependent on budget cycles<br>
+            ❌ Slower innovation
+          </div>
+        </div>
+      </div>
+
+      <div class="rev-card">
+        <h3>📱 Option B – Subscription Model</h3>
+        <div class="rev-opt">
+          <div class="opt-title">Per-User Monthly Subscription</div>
+          <div class="opt-desc">Each net-metered household pays ৳ 100/month for premium monitoring, analytics, and automated billing services.</div>
+          <div class="opt-amount">৳ 100 × 1,000,000 = ৳ 10 Crore/Month</div>
+        </div>
+        <div class="rev-opt">
+          <div class="opt-title">Revenue Projection</div>
+          <div class="opt-desc">
+            📊 1M users × ৳100 = <strong>৳ 10 Crore/month</strong><br>
+            📅 Annual: <strong>৳ 120 Crore/year</strong><br>
+            🏗️ Server &amp; ops: ৳ 30 Crore/year<br>
+            💰 <strong>Net profit: ৳ 90 Crore/year</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue Projection Chart -->
+    <div class="earning-card" style="margin-top:20px">
+      <h3>📊 Revenue Projection (2024–2030)</h3>
+      <canvas id="revenueChart" height="80"></canvas>
+    </div>
+
+    <!-- Impact Section -->
+    <div class="earning-card" style="margin-top:20px">
+      <h3>🌍 Environmental &amp; Social Impact</h3>
+      <div class="invest-row">
+        <div class="invest-box"><span class="big">12.3M</span><span class="lbl">tonnes CO₂ avoided/year<br>(at 5 GW)</span></div>
+        <div class="invest-box"><span class="big">40M</span><span class="lbl">households powered<br>by clean energy</span></div>
+        <div class="invest-box"><span class="big">500,000</span><span class="lbl">green jobs created<br>by 2030</span></div>
+        <div class="invest-box"><span class="big">৳ 8,400</span><span class="lbl">avg annual saving<br>per household</span></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="gov-footer">
+  <p>© 2026 Bangladesh Power Development Board (BPDB) | Ministry of Power, Energy &amp; Mineral Resources | Government of the People's Republic of Bangladesh</p>
+</footer>
+
+<script>
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-BD',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+new Chart(document.getElementById('revenueChart'),{
+  type:'line',
+  data:{
+    labels:['2024','2025','2026','2027','2028','2029','2030'],
+    datasets:[
+      {label:'Users (Thousands)',data:[0.1,10,12.45,100,350,700,1000],borderColor:'#1565c0',backgroundColor:'rgba(21,101,192,0.1)',fill:true,tension:0.4,yAxisID:'y1'},
+      {label:'Revenue (৳ Crore/mo)',data:[0,1,1.24,10,35,70,100],borderColor:'#006a4e',backgroundColor:'rgba(0,106,78,0.1)',fill:true,tension:0.4,yAxisID:'y2'}
+    ]
+  },
+  options:{
+    responsive:true,
+    plugins:{legend:{position:'top'}},
+    scales:{
+      y1:{type:'linear',position:'left',title:{display:true,text:'Users (Thousands)'},beginAtZero:true},
+      y2:{type:'linear',position:'right',title:{display:true,text:'Revenue (৳ Crore/mo)'},beginAtZero:true,grid:{drawOnChartArea:false}}
+    }
+  }
+});
+</script>
+</body>
+</html>

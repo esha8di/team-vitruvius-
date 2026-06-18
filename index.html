@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bangladesh Solar Energy Monitoring System</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; }
+
+  .landing-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #003d2a 0%, #006a4e 40%, #004d38 70%, #001a12 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .landing-wrapper::before {
+    content: '';
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+    top: -200px; right: -200px;
+  }
+  .landing-wrapper::after {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+    bottom: -150px; left: -150px;
+  }
+
+  .top-stripe {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(to right, #006a4e 50%, #f42a41 50%);
+  }
+
+  .landing-logo {
+    font-size: 80px;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 4px 16px rgba(0,0,0,0.4));
+    animation: floatSun 3s ease-in-out infinite;
+    z-index: 1;
+  }
+  @keyframes floatSun {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+  }
+
+  .landing-ministry {
+    color: rgba(255,255,255,0.65);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    text-align: center;
+    z-index: 1;
+  }
+  .landing-title {
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 800;
+    text-align: center;
+    margin: 0 0 6px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    z-index: 1;
+  }
+  .landing-subtitle {
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 48px;
+    z-index: 1;
+  }
+
+  .divider {
+    width: 60px; height: 3px;
+    background: #f42a41;
+    border-radius: 2px;
+    margin: 0 auto 48px;
+    z-index: 1;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  .portal-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 220px;
+    padding: 36px 24px;
+    border-radius: 20px;
+    text-decoration: none;
+    border: 2px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .portal-btn:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.5); }
+
+  .btn-gov {
+    background: rgba(255,255,255,0.1);
+  }
+  .btn-gov:hover {
+    background: rgba(255,255,255,0.18);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+  }
+
+  .btn-customer {
+    background: rgba(244,42,65,0.15);
+    border-color: rgba(244,42,65,0.4);
+  }
+  .btn-customer:hover {
+    background: rgba(244,42,65,0.28);
+    box-shadow: 0 16px 48px rgba(244,42,65,0.3);
+    border-color: rgba(244,42,65,0.8);
+  }
+
+  .badge-gov {
+    position: absolute; top: 14px; right: 14px;
+    background: #ffd700; color: #004d38;
+    font-size: 10px; font-weight: 800;
+    padding: 2px 8px; border-radius: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-icon  { font-size: 48px; margin-bottom: 14px; }
+  .btn-label { color: #ffffff; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .btn-desc  { color: rgba(255,255,255,0.65); font-size: 12px; text-align: center; line-height: 1.5; }
+
+  .landing-footer {
+    position: absolute;
+    bottom: 20px;
+    color: rgba(255,255,255,0.35);
+    font-size: 11px;
+    text-align: center;
+    padding: 0 20px;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+<div class="landing-wrapper">
+  <div class="top-stripe"></div>
+
+  <div class="landing-logo">☀️</div>
+  <p class="landing-ministry">People's Republic of Bangladesh</p>
+  <h1 class="landing-title">Solar Energy Monitoring System</h1>
+  <p class="landing-subtitle">Ministry of Power, Energy &amp; Mineral Resources · BPDB</p>
+  <div class="divider"></div>
+
+  <div class="btn-row">
+    <a href="dashboard.html" class="portal-btn btn-gov">
+      <span class="badge-gov">OFFICIAL</span>
+      <div class="btn-icon">🏛️</div>
+      <div class="btn-label">Government</div>
+      <div class="btn-desc">Solar parks, rooftop monitoring, national dashboard &amp; roadmap</div>
+    </a>
+
+    <a href="customer.html" class="portal-btn btn-customer">
+      <div class="btn-icon">👤</div>
+      <div class="btn-label">Customer</div>
+      <div class="btn-desc">View your generation, earnings &amp; net metering account</div>
+    </a>
+  </div>
+
+  <div class="landing-footer">
+    © 2026 Bangladesh Power Development Board (BPDB) &nbsp;|&nbsp; All rights reserved
+  </div>
+</div>
+</body>
+</html>
