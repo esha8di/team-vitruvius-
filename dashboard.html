@@ -3,20 +3,129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard – Bangladesh Solar Monitoring</title>
+<title>Solar Forecast Dashboard – PGCB NLDC</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  /* ── Forecast KPI cards ── */
+  .accuracy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px; margin-bottom: 24px;
+  }
+  .acc-card {
+    background: white; border-radius: 10px; padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-top: 4px solid #006a4e; text-align: center;
+  }
+  .acc-card.info   { border-top-color: #1565c0; }
+  .acc-card.warn   { border-top-color: #f9a825; }
+  .acc-card.danger { border-top-color: #f44336; }
+  .acc-val { font-size: 26px; font-weight: 800; color: #004d38; display: block; }
+  .acc-lbl { font-size: 12px; color: #666; margin-top: 4px; }
+  .acc-sub { font-size: 11px; color: #aaa; margin-top: 2px; }
+
+  /* ── Full-width chart card ── */
+  .full-chart-card {
+    background: white; border-radius: 10px; padding: 22px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px;
+  }
+  .full-chart-card h3 { font-size: 14px; color: #004d38; font-weight: 600; margin-bottom: 6px; }
+  .full-chart-card p.sub { font-size: 12px; color: #888; margin-bottom: 14px; }
+
+  /* ── Section divider ── */
+  .section-divider {
+    display: flex; align-items: center; gap: 14px;
+    margin: 36px 0 20px;
+  }
+  .section-divider h2 { font-size: 18px; font-weight: 700; color: #004d38; white-space: nowrap; }
+  .section-divider::after { content:''; flex:1; height:2px; background:#e8f5e9; }
+  .sdiv-badge {
+    background: #f44336; color: white; font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 12px; white-space: nowrap;
+  }
+  .sdiv-badge.blue { background: #1565c0; }
+
+  /* ── Prediction day cards ── */
+  .pred-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: 14px; margin-bottom: 20px;
+  }
+  .pred-card {
+    background: white; border-radius: 12px; padding: 16px 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 4px solid #f44336;
+    position: relative; overflow: hidden;
+  }
+  .pred-card.today { border-left-color: #e65100; background: #fff8f5; }
+  .pred-card-date {
+    font-size: 11px; font-weight: 700; color: #888;
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+  }
+  .pred-card-date span {
+    background: #fff3e0; color: #e65100; font-size: 10px;
+    padding: 1px 6px; border-radius: 8px; margin-left: 4px;
+  }
+  .pred-card-val {
+    font-size: 28px; font-weight: 800; color: #c62828; line-height: 1;
+  }
+  .pred-card-unit { font-size: 12px; color: #888; margin-top: 2px; }
+  .pred-card-range {
+    font-size: 11px; color: #999; margin-top: 8px;
+    padding-top: 8px; border-top: 1px solid #f0f0f0;
+  }
+  .pred-card-range b { color: #555; }
+  .pred-card-nldc {
+    font-size: 11px; margin-top: 4px; color: #1565c0; font-weight: 600;
+  }
+  .trend-down { color: #b71c1c; font-size: 11px; margin-top: 6px; font-weight: 600; }
+  .pred-card::after {
+    content: '↘'; position: absolute; bottom: 10px; right: 12px;
+    font-size: 22px; color: rgba(244,67,54,0.12); font-weight: 900;
+  }
+  .pred-card.today::after { content: '★'; color: rgba(230,81,0,0.15); }
+
+  /* ── Legend badges ── */
+  .trend-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .trend-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 1px solid;
+  }
+  .tb-green  { background:#e8f5e9; border-color:#a5d6a7; color:#1b5e20; }
+  .tb-blue   { background:#e3f2fd; border-color:#90caf9; color:#0d47a1; }
+  .tb-orange { background:#fff3e0; border-color:#ffcc80; color:#e65100; }
+  .tb-red    { background:#ffebee; border-color:#ef9a9a; color:#b71c1c; }
+  .dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+
+  /* ── Badges in plant table ── */
+  .over-badge  { background:#fff8e1; color:#e65100; font-size:11px; padding:2px 7px; border-radius:8px; }
+  .under-badge { background:#ffebee; color:#b71c1c; font-size:11px; padding:2px 7px; border-radius:8px; }
+  .exact-badge { background:#e8f5e9; color:#1b5e20; font-size:11px; padding:2px 7px; border-radius:8px; }
+
+  /* ── Source note ── */
+  .source-note {
+    font-size: 11px; color: #999; background: #f9f9f9;
+    border-left: 3px solid #ddd; padding: 8px 14px;
+    border-radius: 4px; margin-bottom: 20px;
+  }
+
+  @media(max-width:768px) {
+    .pred-cards-grid { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
 </head>
 <body>
+
 <header class="gov-header">
   <div class="flag-stripe"></div>
   <div class="header-content">
     <div class="logo-area">
       <div class="gov-seal">☀</div>
       <div class="title-area">
-        <p class="ministry">People's Republic of Bangladesh</p>
-        <h1>Solar Energy Monitoring Dashboard</h1>
-        <p class="dept">Ministry of Power, Energy &amp; Mineral Resources</p>
+        <p class="ministry">Power Grid Company of Bangladesh PLC (PGCB)</p>
+        <h1>Solar Generation Forecast &amp; Analysis</h1>
+        <p class="dept">National Load Dispatch Center (NLDC) — Forecast vs Actual</p>
       </div>
     </div>
     <div class="header-date" id="headerDate"></div>
@@ -29,178 +138,480 @@
   <a href="solar-park.html">Solar Parks</a>
   <a href="rooftop.html">Rooftop Solar</a>
   <a href="roadmap.html">Roadmap</a>
-  <a href="forecast.html">Forecast</a>
   <a href="index.html" style="margin-left:auto;opacity:0.6;font-size:13px">← Home</a>
 </nav>
 
 <main class="container">
+
   <div class="page-title">
-    <h2>National Solar Energy Overview</h2>
-    <span class="live-badge">● LIVE</span>
+    <h2>Solar Forecast Dashboard</h2>
+    <span class="live-badge">NLDC DATA</span>
   </div>
 
-  <!-- KPI Cards -->
-  <div class="kpi-grid">
-    <div class="kpi-card green">
-      <div class="kpi-icon">⚡</div>
-      <div class="kpi-data">
-        <span class="kpi-value">4903 MW</span>
-        <span class="kpi-label">Total Installed Capacity</span>
-      </div>
+  <div class="source-note">
+    Source: PGCB NLDC Daily Forecast Reports &nbsp;|&nbsp;
+    Period: 27 May – 25 Jun 2026 &nbsp;|&nbsp; 17 solar plants &nbsp;|&nbsp;
+    <strong>Fuel Type: Solar only</strong>
+  </div>
+
+  <!-- ── Summary KPIs ── -->
+  <div class="accuracy-grid">
+    <div class="acc-card">
+      <span class="acc-val">786 MW</span>
+      <div class="acc-lbl">Present Capacity (Theoretical)</div>
+      <div class="acc-sub">17 plants · 687 MW installed</div>
     </div>
-    <div class="kpi-card blue">
-      <div class="kpi-icon">🔆</div>
-      <div class="kpi-data">
-        <span class="kpi-value">3656 MW</span>
-        <span class="kpi-label">Current Generation</span>
-      </div>
+    <div class="acc-card info">
+      <span class="acc-val">534 MW</span>
+      <div class="acc-lbl">Avg Actual Generation (Day Peak)</div>
+      <div class="acc-sub">67.9% capacity utilisation</div>
     </div>
-    <div class="kpi-card orange">
-      <div class="kpi-icon">📉</div>
-      <div class="kpi-data">
-        <span class="kpi-value">25.84%</span>
-        <span class="kpi-label">Avg System Loss</span>
-      </div>
+    <div class="acc-card warn">
+      <span class="acc-val">633 MW</span>
+      <div class="acc-lbl">Avg NLDC Forecast</div>
+      <div class="acc-sub">Overestimates by ~18.6%</div>
     </div>
-    <div class="kpi-card red">
-      <div class="kpi-icon">🏠</div>
-      <div class="kpi-data">
-        <span class="kpi-value">12,450</span>
-        <span class="kpi-label">Net-Metered Rooftops</span>
-      </div>
-    </div>
-    <div class="kpi-card purple">
-      <div class="kpi-icon">🏭</div>
-      <div class="kpi-data">
-        <span class="kpi-value">76</span>
-        <span class="kpi-label">Solar Power Plants</span>
-      </div>
-    </div>
-    <div class="kpi-card teal">
-      <div class="kpi-icon">💰</div>
-      <div class="kpi-data">
-        <span class="kpi-value">৳ 3.2 Cr</span>
-        <span class="kpi-label">Monthly Revenue</span>
-      </div>
+    <div class="acc-card danger">
+      <span class="acc-val">18.0%</span>
+      <div class="acc-lbl">MAPE — Forecast Error</div>
+      <div class="acc-sub">MAE ≈ 112 MW per day</div>
     </div>
   </div>
 
-  <!-- Charts Row -->
+  <!-- ── Historical Chart ── -->
+  <div class="trend-badges">
+    <span class="trend-badge tb-green"><span class="dot" style="background:#2e7d32"></span> Present Capacity (Theoretical)</span>
+    <span class="trend-badge tb-blue"><span class="dot" style="background:#1565c0"></span> NLDC Forecast</span>
+    <span class="trend-badge tb-orange"><span class="dot" style="background:#e65100"></span> Actual Generation</span>
+  </div>
+
+  <div class="full-chart-card">
+    <h3>Theoretical Capacity vs NLDC Forecast vs Actual — 27 May to 25 Jun 2026</h3>
+    <p class="sub">Day Peak values (MW) · All 17 solar plants aggregated · Source: PGCB NLDC</p>
+    <canvas id="mainChart" height="100"></canvas>
+  </div>
+
+  <!-- ── Forecast Error Chart ── -->
+  <div class="full-chart-card">
+    <h3>Daily Forecast Error — NLDC Forecast minus Actual (MW)</h3>
+    <p class="sub">Blue = overestimated · Orange = underestimated · Large spikes = monsoon cloud cover events</p>
+    <canvas id="errorChart" height="80"></canvas>
+  </div>
+
+  <!-- ── PREDICTION SECTION ── -->
+  <div class="section-divider" id="prediction">
+    <h2>7-Day Prediction</h2>
+    <span class="sdiv-badge">LINEAR REGRESSION</span>
+  </div>
+
+  <p style="font-size:13px;color:#555;margin-bottom:18px;">
+    Predicted using linear regression on last 14 data points (12–25 Jun 2026).
+    Slope: <strong>−4.88 MW/day</strong> — declining trend due to intensifying monsoon cloud cover.
+    Confidence band: <strong>±20%</strong>.
+  </p>
+
+  <!-- Day-by-day prediction cards -->
+  <div class="pred-cards-grid">
+    <div class="pred-card today">
+      <div class="pred-card-date">25 Jun 2026 <span>BASELINE</span></div>
+      <div class="pred-card-val">550</div>
+      <div class="pred-card-unit">MW — Actual (Day Peak)</div>
+      <div class="pred-card-range"><b>NLDC Forecast:</b> 616 MW</div>
+      <div class="pred-card-nldc">Last known data point</div>
+    </div>
+    <div class="pred-card">
+      <div class="pred-card-date">26 Jun 2026</div>
+      <div class="pred-card-val">466</div>
+      <div class="pred-card-unit">MW — Predicted</div>
+      <div class="pred-card-range"><b>Range:</b> 373 – 559 MW</div>
+      <div class="pred-card-nldc">Exp. NLDC: ~599 MW</div>
+      <div class="trend-down">↘ −84 MW vs baseline</div>
+    </div>
+    <div class="pred-card">
+      <div class="pred-card-date">27 Jun 2026</div>
+      <div class="pred-card-val">461</div>
+      <div class="pred-card-unit">MW — Predicted</div>
+      <div class="pred-card-range"><b>Range:</b> 369 – 553 MW</div>
+      <div class="pred-card-nldc">Exp. NLDC: ~592 MW</div>
+      <div class="trend-down">↘ −5 MW vs prev</div>
+    </div>
+    <div class="pred-card">
+      <div class="pred-card-date">28 Jun 2026</div>
+      <div class="pred-card-val">456</div>
+      <div class="pred-card-unit">MW — Predicted</div>
+      <div class="pred-card-range"><b>Range:</b> 365 – 547 MW</div>
+      <div class="pred-card-nldc">Exp. NLDC: ~585 MW</div>
+      <div class="trend-down">↘ −5 MW vs prev</div>
+    </div>
+    <div class="pred-card">
+      <div class="pred-card-date">29 Jun 2026</div>
+      <div class="pred-card-val">452</div>
+      <div class="pred-card-unit">MW — Predicted</div>
+      <div class="pred-card-range"><b>Range:</b> 362 – 542 MW</div>
+      <div class="pred-card-nldc">Exp. NLDC: ~578 MW</div>
+      <div class="trend-down">↘ −4 MW vs prev</div>
+    </div>
+    <div class="pred-card">
+      <div class="pred-card-date">30 Jun 2026</div>
+      <div class="pred-card-val">447</div>
+      <div class="pred-card-unit">MW — Predicted</div>
+      <div class="pred-card-range"><b>Range:</b> 358 – 536 MW</div>
+      <div class="pred-card-nldc">Exp. NLDC: ~571 MW</div>
+      <div class="trend-down">↘ −5 MW vs prev</div>
+    </div>
+    <div class="pred-card">
+      <div class="pred-card-date">01 Jul 2026</div>
+      <div class="pred-card-val">442</div>
+      <div class="pred-card-unit">MW — Predicted</div>
+      <div class="pred-card-range"><b>Range:</b> 354 – 530 MW</div>
+      <div class="pred-card-nldc">Exp. NLDC: ~564 MW</div>
+      <div class="trend-down">↘ −5 MW vs prev</div>
+    </div>
+    <div class="pred-card">
+      <div class="pred-card-date">02 Jul 2026</div>
+      <div class="pred-card-val">437</div>
+      <div class="pred-card-unit">MW — Predicted</div>
+      <div class="pred-card-range"><b>Range:</b> 350 – 524 MW</div>
+      <div class="pred-card-nldc">Exp. NLDC: ~557 MW</div>
+      <div class="trend-down">↘ −5 MW vs prev</div>
+    </div>
+  </div>
+
+  <!-- Prediction chart -->
+  <div class="full-chart-card">
+    <h3>7-Day Prediction with Confidence Band — 25 Jun to 02 Jul 2026</h3>
+    <p class="sub">Dashed red = predicted actual · Dashed blue = expected NLDC forecast · Shaded area = ±20% confidence interval</p>
+    <canvas id="predChart" height="95"></canvas>
+  </div>
+
+  <!-- ── Scatter + Monthly trend ── -->
+  <div class="section-divider">
+    <h2>Accuracy Analysis</h2>
+    <span class="sdiv-badge blue">27 May – 25 Jun</span>
+  </div>
+
   <div class="charts-row">
     <div class="chart-card">
-      <h3>Generation vs Capacity – Top 5 Plants</h3>
-      <canvas id="barChart" height="220"></canvas>
+      <h3>Forecast vs Actual Scatter — All Dates</h3>
+      <canvas id="scatterChart" height="260"></canvas>
     </div>
     <div class="chart-card">
-      <h3>Energy Mix by Source</h3>
-      <canvas id="pieChart" height="220"></canvas>
+      <h3>Avg Daily Solar Generation by Period (MW)</h3>
+      <canvas id="monthChart" height="260"></canvas>
     </div>
   </div>
 
-  <!-- Alert Banner -->
-  <div class="alert-box warning">
-    <strong>⚠ Maintenance Alert:</strong> Sirajganj Solar Park Unit-3 (8 MW) is under scheduled maintenance. Expected restoration: 20 June 2026.
+  <!-- ── Plant Table ── -->
+  <div class="section-divider">
+    <h2>Plant-Level Detail</h2>
+    <span class="sdiv-badge blue">25 Jun 2026</span>
   </div>
 
-  <!-- Plants Status Table -->
-  <div class="table-card">
-    <div class="table-header">
-      <h3>Solar Power Plant Status – Real Time</h3>
-      <a href="solar-park.html" class="btn-view">View All Plants →</a>
-    </div>
+  <div class="table-card" style="margin-top:0">
     <div class="table-scroll">
       <table class="data-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>Plant Name</th>
-            <th>Division</th>
-            <th>Capacity (MW)</th>
-            <th>Generation (MW)</th>
-            <th>System Loss</th>
-            <th>Status</th>
+            <th>Power Station</th>
+            <th>Installed (MW)</th>
+            <th>Present Cap (MW)</th>
+            <th>Actual Day Peak (MW)</th>
+            <th>NLDC Forecast (MW)</th>
+            <th>Utilisation</th>
+            <th>Forecast Accuracy</th>
           </tr>
         </thead>
-        <tbody>
-          <tr><td>1</td><td>Sirajganj Solar Park</td><td>Rajshahi</td><td>68</td><td>50</td><td>26.5%</td><td><span class="badge yellow">Weather</span></td></tr>
-          <tr><td>2</td><td>Teknaf Solar Plant</td><td>Chattogram</td><td>30</td><td>27</td><td>10.0%</td><td><span class="badge green">Normal</span></td></tr>
-          <tr><td>3</td><td>Mymensingh Solar Farm</td><td>Mymensingh</td><td>50</td><td>38</td><td>24.0%</td><td><span class="badge yellow">Weather</span></td></tr>
-          <tr><td>4</td><td>Rangpur Solar Park</td><td>Rangpur</td><td>40</td><td>29</td><td>27.5%</td><td><span class="badge red">Maintenance</span></td></tr>
-          <tr><td>5</td><td>Khulna Solar Plant</td><td>Khulna</td><td>55</td><td>45</td><td>18.2%</td><td><span class="badge green">Normal</span></td></tr>
-        </tbody>
+        <tbody id="plantTableBody"></tbody>
+        <tfoot>
+          <tr style="background:#e8f5e9;font-weight:700;">
+            <td colspan="2">TOTAL (17 plants)</td>
+            <td>687</td><td>786.38</td><td>550.05</td><td>616.17</td>
+            <td id="totalUtil"></td>
+            <td id="totalAcc"></td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   </div>
 
-  <!-- Bottom Row -->
-  <div class="bottom-row">
-    <div class="info-card">
-      <h3>🗺 Implementation Progress</h3>
-      <div class="phase-progress">
-        <div class="phase done">
-          <span class="ph-num">Phase 1</span>
-          <span class="ph-desc">Pilot – 100 Rooftops, Rajshahi</span>
-          <span class="ph-badge done">Completed</span>
-        </div>
-        <div class="phase done">
-          <span class="ph-num">Phase 2</span>
-          <span class="ph-desc">Dhaka + Chattogram – 10,000 Rooftops</span>
-          <span class="ph-badge done">Completed</span>
-        </div>
-        <div class="phase active">
-          <span class="ph-num">Phase 3</span>
-          <span class="ph-desc">All Net-Metered Systems – 100 MW+</span>
-          <span class="ph-badge active">In Progress</span>
-        </div>
-        <div class="phase">
-          <span class="ph-num">Phase 4</span>
-          <span class="ph-desc">Nationwide – 1 Million Rooftops, 5 GW</span>
-          <span class="ph-badge pending">Upcoming</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="info-card">
-      <h3>📊 Today's Statistics</h3>
-      <table class="stats-table">
-        <tr><td>Peak Generation</td><td><strong>718.4 MW</strong></td></tr>
-        <tr><td>Units Generated</td><td><strong>14,842 MWh</strong></td></tr>
-        <tr><td>CO₂ Avoided</td><td><strong>12,320 tonnes</strong></td></tr>
-        <tr><td>Households Powered</td><td><strong>~4.8 Million</strong></td></tr>
-        <tr><td>Net Metering Export</td><td><strong>1,204 MWh</strong></td></tr>
-        <tr><td>Revenue (Today)</td><td><strong>৳ 1.07 Crore</strong></td></tr>
-      </table>
-    </div>
-  </div>
 </main>
 
 <footer class="gov-footer">
-  <p>© 2026 Bangladesh Power Development Board (BPDB) | Ministry of Power, Energy &amp; Mineral Resources | Government of the People's Republic of Bangladesh</p>
+  <p>© 2026 Power Grid Company of Bangladesh PLC (PGCB) | National Load Dispatch Center (NLDC) | Ministry of Power, Energy &amp; Mineral Resources</p>
 </footer>
 
 <script>
-  document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-BD', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+document.getElementById('headerDate').textContent =
+  new Date().toLocaleDateString('en-BD', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
 
-  new Chart(document.getElementById('barChart'), {
-    type: 'bar',
-    data: {
-      labels: ['Sirajganj', 'Teknaf', 'Mymensingh', 'Rangpur', 'Khulna'],
-      datasets: [
-        { label: 'Capacity (MW)', data: [68, 30, 50, 40, 55], backgroundColor: 'rgba(34,139,34,0.25)', borderColor: '#228b22', borderWidth: 2 },
-        { label: 'Generation (MW)', data: [50, 27, 38, 29, 45], backgroundColor: 'rgba(34,139,34,0.7)', borderColor: '#155a15', borderWidth: 2 }
-      ]
-    },
-    options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
-  });
+// ── Real NLDC data ──────────────────────────────────────────────────────────
+const histLabels = [
+  '27 May','29 May','30 May','31 May',
+  '01 Jun','02 Jun','03 Jun','04 Jun','05 Jun','06 Jun','07 Jun','08 Jun',
+  '09 Jun','10 Jun','11 Jun','12 Jun','13 Jun','14 Jun','15 Jun',
+  '17 Jun','18 Jun','19 Jun','20 Jun','21 Jun','23 Jun','24 Jun','25 Jun'
+];
+const actualData = [
+  368.76,712.3,701.19,761.48,
+  568.03,617.83,594.9,673.05,600.4,379.11,558.52,602.67,
+  583.52,485,311.46,456.41,595.87,547.2,557.06,
+  525.13,532.74,355.82,573.96,477.09,366.41,496.86,550.05
+];
+const forecastData = [
+  309.18,614.06,711.15,725.15,
+  694.63,700.96,704.36,738,680.26,685.23,625.89,676.89,
+  563.09,562.29,656.89,356.51,675.61,580.57,570.05,
+  675.57,698.43,617.72,665.27,631.7,621.84,587.44,616.17
+];
+const presentCap = [
+  766.35,766.35,766.35,766.35,
+  766.35,766.35,786.35,786.35,786.35,786.35,786.35,786.35,
+  786.35,786.35,786.35,786.35,786.35,786.35,786.35,
+  786.35,786.35,786.35,786.35,786.35,786.38,786.38,786.38
+];
 
-  new Chart(document.getElementById('pieChart'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Solar Parks', 'Rooftop Solar', 'Under Maintenance', 'Offline'],
-      datasets: [{ data: [612.8, 35.4, 18, 5.6], backgroundColor: ['#2e8b57','#4caf50','#ff9800','#f44336'] }]
+// ── Prediction data ─────────────────────────────────────────────────────────
+const predLabels   = ['25 Jun','26 Jun','27 Jun','28 Jun','29 Jun','30 Jun','01 Jul','02 Jul'];
+const predActual   = [550.05,466,461,456,452,447,442,437];
+const predLow      = [550.05,373,369,365,362,358,354,350];
+const predHigh     = [550.05,559,553,547,542,536,530,524];
+const predForecast = [550.05,599,592,585,578,571,564,557];
+
+// ── Main historical chart ───────────────────────────────────────────────────
+new Chart(document.getElementById('mainChart'), {
+  type: 'line',
+  data: {
+    labels: histLabels,
+    datasets: [
+      {
+        label: 'Present Capacity (Theoretical)',
+        data: presentCap,
+        borderColor: '#2e7d32', backgroundColor: 'rgba(46,125,50,0.06)',
+        borderWidth: 2, borderDash: [6,3], pointRadius: 0, tension: 0, fill: true
+      },
+      {
+        label: 'NLDC Forecast (MW)',
+        data: forecastData,
+        borderColor: '#1565c0', backgroundColor: 'rgba(21,101,192,0.08)',
+        borderWidth: 2.5, pointRadius: 4, pointHoverRadius: 6, tension: 0.3
+      },
+      {
+        label: 'Actual Generation (MW)',
+        data: actualData,
+        borderColor: '#e65100', backgroundColor: 'rgba(230,81,0,0.12)',
+        borderWidth: 2.5, pointRadius: 4, pointHoverRadius: 6, tension: 0.3, fill: false
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode:'index', intersect:false },
+    plugins: {
+      legend: { position:'top' },
+      tooltip: {
+        callbacks: {
+          afterBody(ctx) {
+            const i = ctx[0].dataIndex;
+            const err = ((forecastData[i]-actualData[i])/forecastData[i]*100).toFixed(1);
+            return [`Forecast error: ${err}%`];
+          }
+        }
+      }
     },
-    options: { responsive: true, plugins: { legend: { position: 'right' } } }
-  });
+    scales: {
+      y: { min:200, title:{ display:true, text:'MW' } },
+      x: { ticks:{ maxRotation:45 } }
+    }
+  }
+});
+
+// ── Forecast error bar chart ────────────────────────────────────────────────
+const errorData   = forecastData.map((fc,i) => +(fc-actualData[i]).toFixed(2));
+const errorColors = errorData.map(e => e > 0 ? 'rgba(21,101,192,0.7)' : 'rgba(230,81,0,0.7)');
+new Chart(document.getElementById('errorChart'), {
+  type: 'bar',
+  data: {
+    labels: histLabels,
+    datasets: [{
+      label: 'Forecast Error (MW)',
+      data: errorData,
+      backgroundColor: errorColors,
+      borderColor: errorColors.map(c => c.replace('0.7','1')),
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position:'top' },
+      tooltip: {
+        callbacks: {
+          label(ctx) {
+            const v = ctx.raw;
+            return `${v > 0 ? 'Overestimated' : 'Underestimated'} by ${Math.abs(v)} MW`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: { title:{ display:true, text:'Error (MW)' } },
+      x: { ticks:{ maxRotation:45 } }
+    }
+  }
+});
+
+// ── Prediction chart ────────────────────────────────────────────────────────
+new Chart(document.getElementById('predChart'), {
+  type: 'line',
+  data: {
+    labels: predLabels,
+    datasets: [
+      {
+        label: 'Confidence High (+20%)',
+        data: predHigh,
+        borderColor: 'rgba(244,67,54,0)', backgroundColor: 'rgba(244,67,54,0.10)',
+        fill: '+1', pointRadius: 0, tension: 0.3
+      },
+      {
+        label: 'Confidence Low (−20%)',
+        data: predLow,
+        borderColor: 'rgba(244,67,54,0)', backgroundColor: 'rgba(244,67,54,0.10)',
+        fill: false, pointRadius: 0, tension: 0.3
+      },
+      {
+        label: 'Predicted Actual (MW)',
+        data: predActual,
+        borderColor: '#f44336', borderWidth: 2.5, borderDash: [5,4],
+        backgroundColor: 'rgba(244,67,54,0.08)',
+        pointRadius: 6, pointHoverRadius: 8, tension: 0.3,
+        pointStyle: 'triangle', fill: false
+      },
+      {
+        label: 'Expected NLDC Forecast (MW)',
+        data: predForecast,
+        borderColor: '#1565c0', borderWidth: 2, borderDash: [8,4],
+        pointRadius: 4, tension: 0.3, fill: false
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode:'index', intersect:false },
+    plugins: { legend:{ position:'top' } },
+    scales: {
+      y: { min:300, title:{ display:true, text:'MW' } }
+    }
+  }
+});
+
+// ── Scatter ─────────────────────────────────────────────────────────────────
+new Chart(document.getElementById('scatterChart'), {
+  type: 'scatter',
+  data: {
+    datasets: [
+      {
+        label: 'Forecast vs Actual',
+        data: forecastData.map((fc,i) => ({ x:fc, y:actualData[i] })),
+        backgroundColor: 'rgba(21,101,192,0.55)', pointRadius:6, pointHoverRadius:8
+      },
+      {
+        label: 'Perfect Forecast Line',
+        data: [{ x:300,y:300 },{ x:760,y:760 }],
+        type:'line', borderColor:'#2e7d32', borderDash:[6,4],
+        borderWidth:1.5, pointRadius:0, fill:false
+      }
+    ]
+  },
+  options: {
+    responsive:true,
+    plugins:{ legend:{ position:'top' } },
+    scales: {
+      x:{ title:{ display:true, text:'NLDC Forecast (MW)' }, min:280, max:780 },
+      y:{ title:{ display:true, text:'Actual Generation (MW)' }, min:280, max:780 }
+    }
+  }
+});
+
+// ── Monthly trend ───────────────────────────────────────────────────────────
+new Chart(document.getElementById('monthChart'), {
+  type: 'bar',
+  data: {
+    labels: ['May 2026\n(4 days)','Jun 1–8\n(8 days)','Jun 9–15\n(7 days)','Jun 17–25\n(8 days)'],
+    datasets: [
+      {
+        label: 'Avg Actual (MW)',
+        data: [
+          +((368.76+712.3+701.19+761.48)/4).toFixed(1),
+          +((568.03+617.83+594.9+673.05+600.4+379.11+558.52+602.67)/8).toFixed(1),
+          +((583.52+485+311.46+456.41+595.87+547.2+557.06)/7).toFixed(1),
+          +((525.13+532.74+355.82+573.96+477.09+366.41+496.86+550.05)/8).toFixed(1)
+        ],
+        backgroundColor:'rgba(230,81,0,0.7)', borderColor:'#e65100', borderWidth:2
+      },
+      {
+        label: 'Avg NLDC Forecast (MW)',
+        data: [
+          +((309.18+614.06+711.15+725.15)/4).toFixed(1),
+          +((694.63+700.96+704.36+738+680.26+685.23+625.89+676.89)/8).toFixed(1),
+          +((563.09+562.29+656.89+356.51+675.61+580.57+570.05)/7).toFixed(1),
+          +((675.57+698.43+617.72+665.27+631.7+621.84+587.44+616.17)/8).toFixed(1)
+        ],
+        backgroundColor:'rgba(21,101,192,0.55)', borderColor:'#1565c0', borderWidth:2
+      }
+    ]
+  },
+  options: {
+    responsive:true,
+    plugins:{ legend:{ position:'top' } },
+    scales:{ y:{ beginAtZero:false, min:400, title:{ display:true, text:'MW' } } }
+  }
+});
+
+// ── Plant detail table ──────────────────────────────────────────────────────
+const plants = [
+  { name:'Teesta Solar Limited',            inst:200, pres:200,   act:136,   fc:160.09 },
+  { name:'Mongla Orion 100 MW Solar PP',    inst:100, pres:100,   act:51,    fc:60     },
+  { name:'Pabna Solar 100 MW',              inst:0,   pres:100,   act:103,   fc:100    },
+  { name:'Pabna 64 MW Solar Plant',         inst:64,  pres:64.55, act:48.55, fc:54     },
+  { name:'Sirajganj 68 MW Solar Park',      inst:68,  pres:68,    act:52.84, fc:61     },
+  { name:'Sonagazi 75 MW (AC) Solar PP',    inst:75,  pres:75,    act:22,    fc:45     },
+  { name:'Sutiakhali 50 MW Solar PP',       inst:50,  pres:50,    act:31.8,  fc:45     },
+  { name:'Spectra Solar Plant Ltd.',        inst:35,  pres:35,    act:34,    fc:26     },
+  { name:'Intraco Solar 30 MW',             inst:30,  pres:30,    act:27,    fc:20     },
+  { name:'Teknaf 20 MW PP (Solartech)',     inst:20,  pres:20,    act:5,     fc:6      },
+  { name:'Muktagacha Solartech Energy Ltd', inst:20,  pres:20,    act:20.2,  fc:20     },
+  { name:'Sympa Solar Power 8 MW',          inst:8,   pres:8,     act:5.1,   fc:6      },
+  { name:'Kaptai 7 MW Solar PP',            inst:7,   pres:6,     act:1.61,  fc:4.28   },
+  { name:'Sirajgonj 6.55 MW Solar',         inst:6,   pres:6.12,  act:3.95,  fc:5.6    },
+  { name:'Moulvibazar 10 MW Solar PP',      inst:0,   pres:0,     act:6,     fc:0      },
+  { name:'Sarishabari 3 MW Solar Plant',    inst:3,   pres:2.71,  act:1.8,   fc:2.2    },
+  { name:'Barisal 1 MW Solar Plant',        inst:1,   pres:1,     act:0.2,   fc:1      },
+];
+
+const tbody = document.getElementById('plantTableBody');
+plants.forEach((p, i) => {
+  const util    = p.pres > 0 ? (p.act/p.pres*100).toFixed(1) : 'N/A';
+  const accPct  = p.fc   > 0 ? (100-Math.abs(p.fc-p.act)/p.fc*100).toFixed(1) : 'N/A';
+  const diff    = p.fc - p.act;
+  const badge   = Math.abs(diff) < 2
+    ? `<span class="exact-badge">On Target</span>`
+    : diff > 0
+      ? `<span class="over-badge">Over ${diff.toFixed(1)} MW</span>`
+      : `<span class="under-badge">Under ${Math.abs(diff).toFixed(1)} MW</span>`;
+  const uc = parseFloat(util) > 80 ? '#1b5e20' : parseFloat(util) > 50 ? '#e65100' : '#b71c1c';
+  tbody.innerHTML += `<tr>
+    <td>${i+1}</td>
+    <td><strong>${p.name}</strong></td>
+    <td>${p.inst}</td><td>${p.pres}</td>
+    <td><strong>${p.act}</strong></td><td>${p.fc}</td>
+    <td><span style="color:${uc};font-weight:700">${util}%</span></td>
+    <td>${badge} <small style="color:#888">${accPct !== 'N/A' ? accPct+'%' : ''}</small></td>
+  </tr>`;
+});
+
+document.getElementById('totalUtil').innerHTML = `<strong style="color:#e65100">${(550.05/786.38*100).toFixed(1)}%</strong>`;
+document.getElementById('totalAcc').innerHTML  = `<strong style="color:#1565c0">${(100-Math.abs(616.17-550.05)/616.17*100).toFixed(1)}%</strong>`;
 </script>
 </body>
 </html>
